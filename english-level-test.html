@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>영어 레벨 셀프 테스트</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,900&family=Inter:wght@400;500;600;700&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#12283a; --ink-soft:#3a4f60;
+    --paper:#f3efe6; --card:#ffffff; --line:#e2dccf;
+    --gold:#e0a233; --gold-deep:#c07f1a;
+    --yes:#1f7a6b; --yes-soft:#e5f1ee;
+    --no:#b0544b; --no-soft:#f6e8e6;
+    --shadow:0 18px 40px -24px rgba(18,40,58,.5);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    font-family:'Inter','Noto Sans KR',sans-serif;color:var(--ink);
+    background:radial-gradient(120% 90% at 50% -10%, #fbf8f1 0%, var(--paper) 55%, #ece5d6 100%);
+    min-height:100dvh;display:flex;justify-content:center;
+    padding:clamp(16px,4vw,40px);line-height:1.5;-webkit-font-smoothing:antialiased;
+  }
+  .stage{width:100%;max-width:660px;display:flex;flex-direction:column}
+  .brand{display:flex;align-items:center;gap:10px;font-family:'Fraunces','Noto Sans KR',serif;font-weight:900;letter-spacing:-.01em;font-size:15px;margin-bottom:22px}
+  .brand .dot{width:9px;height:9px;border-radius:50%;background:var(--gold);box-shadow:0 0 0 4px rgba(224,162,51,.18)}
+
+  .screen{display:none;animation:rise .5s cubic-bezier(.2,.8,.2,1)}
+  .screen.active{display:block}
+  @keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+  @media (prefers-reduced-motion:reduce){.screen,.screen.active{animation:none}}
+
+  .eyebrow{font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--gold-deep)}
+  h1{font-family:'Fraunces','Noto Sans KR',serif;font-weight:900;font-size:clamp(34px,8vw,52px);line-height:1.02;letter-spacing:-.02em;margin:14px 0 18px}
+  h1 em{font-style:italic;color:var(--gold-deep)}
+  .lead{font-size:16px;color:var(--ink-soft);max-width:44ch}
+  .how{margin:26px 0 30px;background:var(--card);border:1px solid var(--line);border-radius:18px;padding:22px 22px 8px;box-shadow:var(--shadow)}
+  .how li{list-style:none;display:flex;gap:14px;padding-bottom:16px;align-items:flex-start}
+  .how .n{flex:0 0 26px;height:26px;border-radius:50%;background:var(--ink);color:#fff;font-family:'Fraunces',serif;font-weight:600;font-size:14px;display:grid;place-items:center;margin-top:1px}
+  .how b{font-weight:600}
+  .how small{color:var(--ink-soft);display:block;font-size:13.5px}
+
+  .btn{appearance:none;border:none;cursor:pointer;font-family:inherit;font-weight:600;font-size:16px;border-radius:14px;padding:16px 22px;transition:transform .12s,box-shadow .12s,background .15s}
+  .btn:active{transform:translateY(1px)}
+  .btn-primary{background:var(--ink);color:#fff;width:100%;box-shadow:var(--shadow)}
+  .btn-primary:hover{background:#0c1c29}
+  .btn-ghost{background:transparent;color:var(--ink-soft);border:1px solid var(--line)}
+  .btn-ghost:hover{border-color:var(--ink-soft);color:var(--ink)}
+  :focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+
+  .topbar{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:18px}
+  .lvl-tag{display:flex;align-items:baseline;gap:8px}
+  .lvl-tag .code{font-family:'Fraunces',serif;font-weight:900;font-size:30px;letter-spacing:-.02em}
+  .lvl-tag .nm{font-size:13px;color:var(--ink-soft);font-weight:600}
+  .ladder{display:flex;gap:5px;align-items:flex-end;height:34px}
+  .rung{width:12px;border-radius:4px;background:var(--line);transition:background .3s}
+  .rung.done{background:var(--gold)} .rung.now{background:var(--ink)}
+  .rung:nth-child(1){height:12px}.rung:nth-child(2){height:16px}.rung:nth-child(3){height:20px}.rung:nth-child(4){height:25px}.rung:nth-child(5){height:29px}.rung:nth-child(6){height:34px}
+
+  .dots{display:flex;gap:7px;margin-bottom:22px}
+  .dots i{width:100%;height:5px;border-radius:3px;background:var(--line);transition:background .25s}
+  .dots i.filled{background:var(--ink-soft)} .dots i.current{background:var(--gold)}
+
+  .card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:clamp(24px,5vw,34px);box-shadow:var(--shadow);display:flex;flex-direction:column}
+  .q-label{font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--gold-deep);margin-bottom:14px}
+  .sentence{font-family:'Fraunces','Noto Sans KR',serif;font-weight:400;font-size:clamp(23px,5.4vw,30px);line-height:1.32;letter-spacing:-.01em;color:var(--ink)}
+
+  /* reserved reveal zone keeps the action row anchored in one place */
+  .reveal-zone{min-height:92px;display:flex;flex-direction:column;justify-content:center;padding:18px 0 4px;margin-top:14px;border-top:1px dashed transparent;transition:border-color .2s}
+  .reveal-zone.show{border-top-color:var(--line)}
+  .reveal-inner{display:none}
+  .reveal-zone.show .reveal-inner{display:block;animation:rise .3s ease}
+  .tr-label{font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:7px}
+  .tr{font-size:18px;font-weight:500;color:var(--ink);line-height:1.5}
+  .verdict-row{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:12px}
+  .verdict{display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;padding:5px 12px;border-radius:999px}
+  .verdict.yes{background:var(--yes-soft);color:var(--yes)} .verdict.no{background:var(--no-soft);color:var(--no)}
+  .back-btn{appearance:none;border:none;background:none;cursor:pointer;font-family:inherit;font-size:13.5px;font-weight:600;color:var(--ink-soft);padding:4px 2px;white-space:nowrap;flex:0 0 auto}
+  .back-btn:hover{color:var(--ink)}
+
+  .choices{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .choice{appearance:none;cursor:pointer;font-family:inherit;font-weight:600;font-size:15.5px;border-radius:14px;padding:18px 14px;border:1.5px solid var(--line);background:#fff;color:var(--ink);transition:transform .12s,border-color .15s,background .15s;display:flex;flex-direction:column;align-items:center;gap:4px}
+  .choice small{font-weight:500;font-size:12.5px;color:var(--ink-soft)}
+  .choice:hover{transform:translateY(-2px)}
+  .choice.yes:hover{border-color:var(--yes);background:var(--yes-soft)}
+  .choice.no:hover{border-color:var(--no);background:var(--no-soft)}
+  .next-btn{display:none;width:100%}
+  .action.answered .choices{display:none}
+  .action.answered .next-btn{display:block}
+
+  /* result */
+  .result-hero{text-align:center;padding:8px 0 4px}
+  .result-hero .eyebrow{display:block;margin-bottom:10px}
+  .badge{display:inline-flex;flex-direction:column;align-items:center;justify-content:center;width:150px;height:150px;border-radius:50%;margin:6px auto 14px;background:radial-gradient(circle at 50% 30%, #fff 0%, #fbf3e0 100%);border:2px solid var(--gold);box-shadow:var(--shadow)}
+  .badge .code{font-family:'Fraunces',serif;font-weight:900;font-size:52px;letter-spacing:-.03em;color:var(--ink);line-height:1}
+  .badge .nm{font-size:13px;font-weight:700;color:var(--gold-deep);margin-top:6px}
+  .hero-meter{display:inline-block;font-size:13.5px;font-weight:700;color:var(--ink);background:#fff;border:1px solid var(--gold);border-radius:999px;padding:6px 16px;margin-bottom:20px}
+  .result-desc{font-size:16px;color:var(--ink-soft);max-width:46ch;margin:0 auto 30px;text-align:center}
+  .result-desc b{color:var(--ink);font-weight:600}
+
+  .scale-title{font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-soft);margin:0 0 12px 4px}
+  .scale{display:flex;flex-direction:column;gap:8px;margin-bottom:14px}
+  .row{display:grid;grid-template-columns:54px 1fr auto;gap:12px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:13px 15px}
+  .row.me{border-color:var(--gold);background:#fffdf7;box-shadow:0 8px 20px -14px rgba(224,162,51,.6)}
+  .row .rc{font-family:'Fraunces',serif;font-weight:900;font-size:22px;color:var(--ink)}
+  .row.me .rc{color:var(--gold-deep)}
+  .row .rt b{font-weight:600;font-size:14.5px}
+  .row .rt small{display:block;color:var(--ink-soft);font-size:12.5px;margin-top:2px}
+  .meter{font-size:12px;font-weight:700;color:var(--gold-deep);background:#fbf3e0;border-radius:999px;padding:5px 11px;white-space:nowrap;text-align:center;line-height:1.25}
+  .row.me .meter{background:var(--gold);color:#fff}
+  .me-tag{font-size:11px;font-weight:700;color:#fff;background:var(--gold);padding:2px 8px;border-radius:999px;margin-left:6px;vertical-align:middle}
+
+  .disclaimer{font-size:12px;color:var(--ink-soft);text-align:center;margin:0 0 24px;line-height:1.5}
+  .btn-row{display:flex;gap:12px}
+  .btn-row .btn{flex:1}
+  .footnote{font-size:12.5px;color:var(--ink-soft);text-align:center;margin-top:14px}
+  @media (max-width:420px){.row{grid-template-columns:46px 1fr;gap:10px}.meter{grid-column:1/-1;justify-self:start}}
+</style>
+</head>
+<body>
+<div class="stage">
+  <div class="brand"><span class="dot"></span>영어 레벨 셀프 체크</div>
+
+  <!-- INTRO -->
+  <section class="screen active" id="intro">
+    <span class="eyebrow">A1 → C2 · 유럽 공통 기준(CEFR)</span>
+    <h1>읽고 <em>이해되는지</em>만<br>체크하면 끝.</h1>
+    <p class="lead">영어 문장을 하나씩 읽고 "이해돼요 / 잘 모르겠어요"만 고르세요. 쉬운 단계부터 시작해, 이해가 뚝 떨어지는 지점에서 당신의 레벨을 찾아드려요.</p>
+    <ul class="how">
+      <li><span class="n">1</span><div><b>문장을 읽어요</b><small>레벨당 5문장. 사전 없이, 지금 이해되는지로만 판단하세요.</small></div></li>
+      <li><span class="n">2</span><div><b>솔직하게 선택해요</b><small>고른 뒤 한글 해석이 나와요. 틀렸다 싶으면 '뒤로'로 다시 고를 수 있어요.</small></div></li>
+      <li><span class="n">3</span><div><b>레벨을 확인해요</b><small>결과에서 전체 레벨과 체감 지표(초등·중등 등)를 비교해 보여드려요. 다시 하면 문장이 새로 나와요.</small></div></li>
+    </ul>
+    <button class="btn btn-primary" onclick="start()">테스트 시작하기</button>
+  </section>
+
+  <!-- TEST -->
+  <section class="screen" id="test">
+    <div class="topbar">
+      <div class="lvl-tag"><span class="code" id="lvlCode">A1</span><span class="nm" id="lvlName">입문</span></div>
+      <div class="ladder" id="ladder"></div>
+    </div>
+    <div class="dots" id="dots"></div>
+
+    <div class="card">
+      <div class="q-label" id="qLabel">문장 1 / 5</div>
+      <p class="sentence" id="sentence"></p>
+
+      <div class="reveal-zone" id="revealZone">
+        <div class="reveal-inner">
+          <div class="tr-label">한글 해석</div>
+          <p class="tr" id="translation"></p>
+          <div class="verdict-row">
+            <span class="verdict" id="verdict"></span>
+            <button class="back-btn" id="backBtn" onclick="back()">← 뒤로</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="action" id="action">
+        <div class="choices">
+          <button class="choice yes" onclick="pick(true)">이해돼요<small>뜻이 잡혀요</small></button>
+          <button class="choice no" onclick="pick(false)">잘 모르겠어요<small>애매하거나 몰라요</small></button>
+        </div>
+        <button class="btn btn-primary next-btn" id="nextBtn" onclick="next()">다음 문장 →</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- RESULT -->
+  <section class="screen" id="result">
+    <div class="result-hero">
+      <span class="eyebrow">당신의 읽기 레벨</span>
+      <div class="badge"><span class="code" id="rCode">B1</span><span class="nm" id="rName">중급</span></div>
+    </div>
+    <div style="text-align:center"><span class="hero-meter" id="rMeter"></span></div>
+    <p class="result-desc" id="rDesc"></p>
+    <div class="scale-title">전체 레벨 · 체감 지표</div>
+    <div class="scale" id="scale"></div>
+    <p class="disclaimer">체감 지표는 이해를 돕기 위한 대략적인 비유예요. 시험 점수처럼 정확한 기준은 아니에요.</p>
+    <div class="btn-row">
+      <button class="btn btn-ghost" onclick="location.reload()">처음으로</button>
+      <button class="btn btn-primary" onclick="start()">다시 테스트</button>
+    </div>
+    <p class="footnote">'다시 테스트'를 누르면 문장이 새로 섞여서 나와요.</p>
+  </section>
+</div>
+
+<script>
+const LEVELS = [
+  { code:"A1", name:"입문", meter:"영어 첫걸음 · 왕초보",
+    desc:"아주 기초적인 단어와 문장을 이해해요. 자기소개, 물건 이름, 간단한 일상 표현을 알아들을 수 있는 <b>시작 단계</b>예요.",
+    pool:[
+      {en:"My name is Tom.", ko:"제 이름은 톰이에요."},
+      {en:"I have a small dog.", ko:"저는 작은 개를 키워요."},
+      {en:"She is happy today.", ko:"그녀는 오늘 행복해요."},
+      {en:"We eat lunch at noon.", ko:"우리는 정오에 점심을 먹어요."},
+      {en:"The car is red.", ko:"그 차는 빨간색이에요."},
+      {en:"The sky is blue.", ko:"하늘은 파란색이에요."},
+      {en:"I like music.", ko:"저는 음악을 좋아해요."},
+      {en:"He runs very fast.", ko:"그는 아주 빨리 달려요."},
+    ]},
+  { code:"A2", name:"기초", meter:"초등학생 수준",
+    desc:"일상적이고 익숙한 주제의 간단한 문장을 이해해요. 쇼핑, 가족, <b>간단한 과거 이야기</b> 같은 내용을 따라갈 수 있어요.",
+    pool:[
+      {en:"Yesterday I bought some bread at the store.", ko:"어제 저는 가게에서 빵을 좀 샀어요."},
+      {en:"He was late because he missed the bus.", ko:"그는 버스를 놓쳐서 늦었어요."},
+      {en:"Could you tell me how to get to the station?", ko:"역에 어떻게 가는지 알려 주실 수 있나요?"},
+      {en:"I have never eaten Thai food before.", ko:"저는 태국 음식을 먹어 본 적이 없어요."},
+      {en:"She is going to visit her grandmother next week.", ko:"그녀는 다음 주에 할머니를 방문할 거예요."},
+      {en:"I usually get up at seven in the morning.", ko:"저는 보통 아침 7시에 일어나요."},
+      {en:"We watched a movie together last night.", ko:"우리는 어젯밤에 함께 영화를 봤어요."},
+      {en:"There are many people waiting outside.", ko:"밖에 기다리는 사람이 많아요."},
+    ]},
+  { code:"B1", name:"중급", meter:"중학생 수준",
+    desc:"익숙한 일상·업무 주제의 글을 이해하고 글쓴이의 <b>의견까지 파악</b>해요. 여행 중 웬만한 상황에 영어로 대처할 수 있어요.",
+    pool:[
+      {en:"If I had more money, I would travel around the world.", ko:"돈이 더 있다면 세계 여행을 할 텐데요."},
+      {en:"The meeting was cancelled because of the heavy rain.", ko:"그 회의는 폭우 때문에 취소되었어요."},
+      {en:"Although she was tired, she finished all her work.", ko:"그녀는 피곤했지만 일을 모두 끝냈어요."},
+      {en:"I'm not sure whether I should take this job.", ko:"이 일을 받아들여야 할지 잘 모르겠어요."},
+      {en:"The movie was based on a book I read last year.", ko:"그 영화는 제가 작년에 읽은 책을 바탕으로 했어요."},
+      {en:"I've been learning English for three years.", ko:"저는 3년째 영어를 배우고 있어요."},
+      {en:"You should see a doctor if the pain continues.", ko:"통증이 계속되면 병원에 가 보는 게 좋아요."},
+      {en:"He promised to call me as soon as he arrived.", ko:"그는 도착하자마자 저에게 전화하겠다고 약속했어요."},
+    ]},
+  { code:"B2", name:"중상급", meter:"고등학생 · 실용 영어",
+    desc:"뉴스나 논설처럼 <b>추상적이고 전문적인 주제</b>의 복잡한 글도 상당 부분 이해해요. 원어민과 큰 무리 없이 소통할 수 있어요.",
+    pool:[
+      {en:"The new policy has caused a lot of debate among experts.", ko:"그 새 정책은 전문가들 사이에서 많은 논쟁을 일으켰어요."},
+      {en:"Despite the difficulties, the team finished the project on time.", ko:"어려움에도 불구하고 그 팀은 제때 프로젝트를 끝냈어요."},
+      {en:"Her argument is convincing, but it ignores several key facts.", ko:"그녀의 주장은 설득력 있지만 몇 가지 중요한 사실을 무시해요."},
+      {en:"Had I known about the delay, I would have left earlier.", ko:"지연을 알았더라면 저는 더 일찍 떠났을 거예요."},
+      {en:"The book explores how our identity changes over time.", ko:"그 책은 우리의 정체성이 시간이 지나며 어떻게 변하는지 탐구해요."},
+      {en:"The results suggest that the treatment may not work for everyone.", ko:"그 결과는 그 치료가 모두에게 효과가 있지는 않을 수 있음을 시사해요."},
+      {en:"She spoke as if she already knew the answer.", ko:"그녀는 이미 답을 아는 것처럼 말했어요."},
+      {en:"The company is considering expanding into overseas markets.", ko:"그 회사는 해외 시장으로의 확장을 고려하고 있어요."},
+    ]},
+  { code:"C1", name:"고급", meter:"대학 · 전문가 수준",
+    desc:"길고 복잡한 글의 <b>숨은 의미까지 파악</b>해요. 학술적·전문적 텍스트를 유연하게 읽고 미묘한 뉘앙스도 잡아내요.",
+    pool:[
+      {en:"The committee's reluctance to set a deadline undermined the whole plan.", ko:"마감일을 정하기를 꺼린 위원회의 태도가 계획 전체를 약화시켰어요."},
+      {en:"His comments seemed friendly, but they hid a deep resentment.", ko:"그의 말은 친근해 보였지만 깊은 원망을 감추고 있었어요."},
+      {en:"The trend can be attributed to a mix of economic and social factors.", ko:"그 경향은 경제적·사회적 요인이 뒤섞인 데서 비롯한 것으로 볼 수 있어요."},
+      {en:"She handled the delicate negotiations with remarkable tact.", ko:"그녀는 그 민감한 협상을 놀라운 재치로 다뤘어요."},
+      {en:"The report challenges the long-held belief that growth is always good.", ko:"그 보고서는 성장이 언제나 좋다는 오랜 믿음에 이의를 제기해요."},
+      {en:"The proposal was met with a mixture of enthusiasm and skepticism.", ko:"그 제안은 열의와 회의가 뒤섞인 반응을 얻었어요."},
+      {en:"What struck me most was how calmly she responded to the criticism.", ko:"저에게 가장 인상적이었던 건 그녀가 그 비판에 얼마나 침착하게 반응했는가였어요."},
+      {en:"The findings have significant implications for future research.", ko:"그 연구 결과는 향후 연구에 중대한 함의를 지녀요."},
+    ]},
+  { code:"C2", name:"최상급", meter:"원어민 성인 수준",
+    desc:"원어민에 가까운 수준이에요. 거의 모든 글을 <b>미묘한 뉘앙스·함축·문체까지</b> 자연스럽게 이해해요.",
+    pool:[
+      {en:"The prose shifts between lyrical beauty and stark, unflinching realism.", ko:"그 산문은 서정적인 아름다움과 가차 없이 냉엄한 사실주의 사이를 오가요."},
+      {en:"His tendency to obscure things made even simple ideas impenetrable.", ko:"무언가를 모호하게 만드는 그의 성향은 간단한 생각조차 이해할 수 없게 만들었어요."},
+      {en:"To dismiss her critique as mere nitpicking would miss its deeper point.", ko:"그녀의 비평을 단순한 트집으로 치부하는 것은 그 깊은 요점을 놓치는 일이에요."},
+      {en:"Beneath the surface of politeness lay a simmering hostility.", ko:"예의라는 겉모습 아래에는 부글거리는 적대감이 깔려 있었어요."},
+      {en:"The treaty, full of ambiguities, proved impossible to uphold in practice.", ko:"모호함으로 가득한 그 조약은 실제로는 지켜질 수 없는 것으로 드러났어요."},
+      {en:"The argument, however elegant, rests on a fundamentally flawed premise.", ko:"그 주장은 아무리 정교해도 근본적으로 결함 있는 전제에 기대고 있어요."},
+      {en:"Her wit was as sharp as it was unsparing.", ko:"그녀의 재치는 날카로운 만큼이나 가차 없었어요."},
+      {en:"The film resists easy interpretation, rewarding those willing to sit with its ambiguities.", ko:"그 영화는 쉬운 해석을 거부하며, 그 모호함을 기꺼이 곱씹는 이들에게 보상을 줘요."},
+    ]},
+];
+const PASS = 4;      // 5문장 중 4개 이상 이해 → 다음 레벨
+const PER_LEVEL = 5; // 매 레벨 출제 문항 수
+
+let session=[], li=0, qi=0, mode='choices', ans=[];
+
+const $=id=>document.getElementById(id);
+function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));$(id).classList.add('active');window.scrollTo({top:0,behavior:'smooth'});}
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function buildSession(){session=LEVELS.map(L=>({...L,q:shuffle(L.pool).slice(0,PER_LEVEL)}));}
+
+function start(){buildSession();li=0;show('test');loadLevel();}
+
+function loadLevel(){
+  ans=[];qi=0;mode='choices';
+  const lad=$('ladder');lad.innerHTML='';
+  for(let i=0;i<6;i++){const r=document.createElement('span');r.className='rung'+(i<li?' done':'')+(i===li?' now':'');lad.appendChild(r);}
+  render();
+}
+
+function renderDots(){const d=$('dots');d.innerHTML='';for(let i=0;i<PER_LEVEL;i++){const s=document.createElement('i');if(i<qi)s.classList.add('filled');if(i===qi)s.classList.add('current');d.appendChild(s);}}
+
+function render(){
+  const L=session[li],Q=L.q[qi];
+  $('lvlCode').textContent=L.code;$('lvlName').textContent=L.name;
+  $('qLabel').textContent=`문장 ${qi+1} / ${PER_LEVEL}`;
+  $('sentence').textContent=Q.en;
+  $('translation').textContent=Q.ko;
+  renderDots();
+
+  const answered = ans[qi]!==undefined;
+  const showReveal = (mode==='reveal' && answered);
+
+  $('revealZone').classList.toggle('show', showReveal);
+  $('action').classList.toggle('answered', showReveal);
+
+  if(showReveal){
+    const v=$('verdict');
+    if(ans[qi]){v.className='verdict yes';v.textContent='✓ 이해됨으로 체크했어요';}
+    else{v.className='verdict no';v.textContent='· 모르겠음으로 체크했어요';}
+    $('nextBtn').textContent = (qi>=PER_LEVEL-1)?'레벨 채점하기 →':'다음 문장 →';
+  }
+}
+
+function pick(understood){ans[qi]=understood;mode='reveal';render();}
+
+function back(){
+  if(mode==='reveal'){ mode='choices'; render(); }      // 방금 선택 되돌리기
+  else if(qi>0){ qi--; mode='reveal'; render(); }        // 이전 문항 보기
+}
+
+function next(){
+  if(qi>=PER_LEVEL-1){ grade(); return; }
+  qi++;
+  mode = (ans[qi]!==undefined)?'reveal':'choices';
+  render();
+}
+
+function grade(){
+  const c = ans.filter(Boolean).length;
+  if(c>=PASS && li<session.length-1){ li++; loadLevel(); return; }
+  let idx;
+  if(c>=PASS) idx=li; else if(li===0) idx=-1; else idx=li-1;
+  renderResult(idx); show('result');
+}
+
+function renderResult(idx){
+  if(idx===-1){
+    $('rCode').textContent='A1-';$('rName').textContent='시작 전';
+    $('rMeter').textContent='왕초보 이전 · 기초 준비';
+    $('rDesc').innerHTML='아직 기초를 다지는 중이에요. 짧고 쉬운 문장과 기본 단어부터 꾸준히 익히면 <b>A1</b>은 금방 도달할 수 있어요. 누구나 여기서 시작해요.';
+  } else {
+    const L=LEVELS[idx];
+    $('rCode').textContent=L.code;$('rName').textContent=L.name;
+    $('rMeter').textContent=L.meter;
+    $('rDesc').innerHTML=L.desc;
+  }
+  const wrap=$('scale');wrap.innerHTML='';
+  LEVELS.forEach((L,i)=>{
+    const me=(i===idx);
+    const row=document.createElement('div');
+    row.className='row'+(me?' me':'');
+    row.innerHTML=`<div class="rc">${L.code}</div>
+      <div class="rt"><b>${L.name}${me?'<span class="me-tag">나</span>':''}</b><small>${plain(L.desc)}</small></div>
+      <div class="meter">${L.meter}</div>`;
+    wrap.appendChild(row);
+  });
+}
+function plain(html){return html.replace(/<[^>]+>/g,'');}
+</script>
+</body>
+</html>
